@@ -452,3 +452,11 @@ root@56e649442c15:/# mongoexport --db dataprueba --collection iris_json --fields
 
 ![alt text](image-5.png)
 
+# 6) Spark
+
+![alt text](image-6.png)
+
+```
+>>> flights.describe()
+DataFrame[summary: string, DayofMonth: string, DayOfWeek: string, Carrier: string, OriginAirportID: string, DestAirportID: string, DepDelay: string, ArrDelay: string]
+```
