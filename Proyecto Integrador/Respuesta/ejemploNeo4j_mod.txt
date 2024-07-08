@@ -1,0 +1,49 @@
+DROP INDEX producto_id_index;
+DROP INDEX cliente_id_index;
+DROP INDEX venta_id_index;
+MATCH (p:Producto) DETACH DELETE p;
+MATCH (c:Cliente) DETACH DELETE c;
+MATCH (v:Venta) DETACH DELETE v;
+
+
+LOAD CSV WITH HEADERS FROM "file:///producto.csv" AS row
+CREATE (n:Producto)
+SET n = row,
+n.IdProducto = toInteger(row.IdProducto),
+n.Producto = toString(row.Producto), 
+n.IdTipoProducto = toInteger(row.IdTipoProducto);
+
+
+LOAD CSV WITH HEADERS FROM "file:///cliente.csv" AS row
+CREATE (n:Cliente)
+SET n = row,
+n.IdCliente = toInteger(row.IdCliente),
+n.Nombre_y_Apellido = toString(row.Nombre_y_Apellido),
+n.Domicilio = toString(row.Domicilio);
+
+LOAD CSV WITH HEADERS FROM "file:///venta.csv" AS row
+CREATE (n:Venta)
+SET n = row,
+n.IdVenta = toInteger(row.IdVenta),
+n.IdCliente = toInteger(row.IdCliente),
+n.IdProducto = toInteger(row.IdProducto),
+n.Precio = toFloat(row.Precio),
+n.Cantidad = toInteger(row.Cantidad);
+
+MATCH(p:Producto) RETURN p;
+MATCH(c:Cliente) RETURN c;
+MATCH(v:Venta) RETURN v;
+
+CREATE INDEX producto_id_index FOR (p:Producto) ON (p.IdProducto);
+CREATE INDEX cliente_id_index FOR (c:Cliente) ON (c.IdCliente);
+CREATE INDEX venta_id_index FOR (v:Venta) ON (v.IdVenta);
+
+MATCH (p:Producto),(v:Venta)
+WHERE p.IdProducto = v.IdProducto
+CREATE (p)-[:VENDIDO_EN]->(v)
+RETURN p, v;
+
+MATCH (c:Cliente),(v:Venta)
+WHERE c.IdCliente = v.IdCliente
+CREATE (c)-[:CLIENTE_EN]->(v)
+RETURN c, v;
